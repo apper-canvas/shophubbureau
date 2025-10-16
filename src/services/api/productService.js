@@ -9,6 +9,12 @@ export const getProducts = async () => {
   return [...productsData];
 };
 
+export const getBrands = async () => {
+  await delay(100);
+  const brands = [...new Set(productsData.map(p => p.brand))].filter(Boolean).sort();
+  return brands;
+};
+
 export const getProductById = async (id) => {
   await delay(250);
   const product = productsData.find(p => p.Id === id);
