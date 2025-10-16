@@ -17,13 +17,17 @@ const ProductCard = ({ product, onAddToCart, onAddToCompare }) => {
     toast.success(`${product.name} added to cart!`);
   };
 
-  const handleAddToCompare = (e) => {
+const handleAddToCompare = (e) => {
     e.stopPropagation();
-    const result = onAddToCompare(product);
-    if (result.success) {
-      toast.success("Product added to comparison");
+    if (typeof onAddToCompare === 'function') {
+      const result = onAddToCompare(product);
+      if (result?.success) {
+        toast.success("Product added to comparison");
+      } else {
+        toast.error(result?.message || "Failed to add product to comparison");
+      }
     } else {
-      toast.error(result.message);
+      toast.error("Comparison feature not available");
     }
   };
 
