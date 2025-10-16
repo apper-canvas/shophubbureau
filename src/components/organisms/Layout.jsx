@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { getCartItems, removeFromCart, updateCartItem } from "@/services/api/cartService";
+import { addToCompare, getCompareItems, removeFromCompare } from "@/services/api/comparisonService";
 import Header from "@/components/organisms/Header";
 import CartDrawer from "@/components/organisms/CartDrawer";
-import { getCartItems, updateCartItem, removeFromCart } from "@/services/api/cartService";
-import { getCompareItems, addToCompare, removeFromCompare } from "@/services/api/comparisonService";
 const Layout = () => {
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
   const [cartItems, setCartItems] = useState([]);
   const [compareItems, setCompareItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -70,7 +72,7 @@ const handleAddToCart = async (product) => {
         setCartItems(prevItems => [...prevItems, newItem]);
       }
     } catch (error) {
-      console.error("Failed to add to cart:", error);
+      console.error("Failed to add item to cart:", error);
     }
   };
 
@@ -95,7 +97,11 @@ const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <div className="min-h-screen bg-background">
-      <Header cartItemCount={cartItemCount} compareCount={compareCount} />
+      <Header 
+        cartItemCount={cartItemCount} 
+        compareCount={compareCount}
+        onCartClick={() => setIsCartOpen(true)}
+      />
       <main>
         <Outlet context={{ 
           cartItems, 
