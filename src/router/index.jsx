@@ -10,6 +10,7 @@ const ProductDetail = lazy(() => import("@/components/pages/ProductDetail"));
 const Cart = lazy(() => import("@/components/pages/Cart"));
 const Checkout = lazy(() => import("@/components/pages/Checkout"));
 const OrderConfirmation = lazy(() => import("@/components/pages/OrderConfirmation"));
+const OrderHistory = lazy(() => import("@/components/pages/OrderHistory"));
 const NotFound = lazy(() => import("@/components/pages/NotFound"));
 
 const SuspenseWrapper = ({ children }) => (
@@ -39,6 +40,10 @@ const mainRoutes = [
   {
     path: "order-confirmation/:orderId",
     element: <SuspenseWrapper><OrderConfirmation /></SuspenseWrapper>
+},
+  {
+    path: "orders",
+    element: <Suspense fallback={<div>Loading.....</div>}><OrderHistory /></Suspense>
   },
   {
     path: "*",

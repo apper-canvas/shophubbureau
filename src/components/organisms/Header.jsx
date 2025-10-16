@@ -79,11 +79,17 @@ const Header = ({ cartItemCount = 0 }) => {
 
         {/* Desktop Categories */}
         <div className="hidden md:flex items-center space-x-6 py-3 border-t border-white/20">
-          <button
+<button
             onClick={() => navigate("/")}
             className="text-sm hover:text-primary transition-colors font-medium"
           >
             All Categories
+          </button>
+          <button
+            onClick={() => navigate("/orders")}
+            className="text-sm hover:text-primary transition-colors font-medium"
+          >
+            Order History
           </button>
           {categories.slice(0, 6).map((category) => (
             <button
@@ -107,7 +113,7 @@ const Header = ({ cartItemCount = 0 }) => {
           
           {/* Mobile Categories */}
           <div className="py-2">
-            <button
+<button
               onClick={() => {
                 navigate("/");
                 setIsMobileMenuOpen(false);
@@ -115,6 +121,15 @@ const Header = ({ cartItemCount = 0 }) => {
               className="block w-full text-left px-4 py-3 text-sm hover:bg-white/10 transition-colors font-medium"
             >
               All Categories
+            </button>
+            <button
+              onClick={() => {
+                navigate("/orders");
+                setIsMobileMenuOpen(false);
+              }}
+              className="block w-full text-left px-4 py-3 text-sm hover:bg-white/10 transition-colors font-medium"
+            >
+              Order History
             </button>
             {categories.map((category) => (
               <button
