@@ -8,7 +8,7 @@ import Badge from "@/components/atoms/Badge";
 import ApperIcon from "@/components/ApperIcon";
 import { toast } from "react-toastify";
 
-const ProductCard = ({ product, onAddToCart }) => {
+const ProductCard = ({ product, onAddToCart, onAddToCompare }) => {
   const navigate = useNavigate();
 
   const handleAddToCart = (e) => {
@@ -17,10 +17,19 @@ const ProductCard = ({ product, onAddToCart }) => {
     toast.success(`${product.name} added to cart!`);
   };
 
+  const handleAddToCompare = (e) => {
+    e.stopPropagation();
+    const result = onAddToCompare(product);
+    if (result.success) {
+      toast.success("Product added to comparison");
+    } else {
+      toast.error(result.message);
+    }
+  };
+
   const handleCardClick = () => {
     navigate(`/product/${product.Id}`);
   };
-
   const isOutOfStock = !product.inStock;
   const hasDiscount = product.originalPrice && product.originalPrice > product.price;
 
@@ -79,15 +88,26 @@ const ProductCard = ({ product, onAddToCart }) => {
         </div>
 
         {/* Add to Cart Button */}
-        <Button
-          onClick={handleAddToCart}
-          disabled={isOutOfStock}
-          className={`w-full ${isOutOfStock ? "opacity-50 cursor-not-allowed" : ""}`}
-          size="sm"
-        >
-          <ApperIcon name="ShoppingCart" size={16} className="mr-2" />
-          {isOutOfStock ? "Out of Stock" : "Add to Cart"}
-        </Button>
+<div className="space-y-2">
+          <Button
+            onClick={handleAddToCart}
+            disabled={isOutOfStock}
+            className={`w-full ${isOutOfStock ? "opacity-50 cursor-not-allowed" : ""}`}
+            size="sm"
+          >
+            <ApperIcon name="ShoppingCart" size={16} className="mr-2" />
+            {isOutOfStock ? "Out of Stock" : "Add to Cart"}
+          </Button>
+          <Button
+            onClick={handleAddToCompare}
+            variant="secondary"
+            className="w-full"
+            size="sm"
+          >
+            <ApperIcon name="Scale" size={16} className="mr-2" />
+            Compare
+          </Button>
+        </div>
       </div>
     </Card>
   );

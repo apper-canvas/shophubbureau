@@ -3,13 +3,15 @@ import { Outlet } from "react-router-dom";
 import Header from "@/components/organisms/Header";
 import CartDrawer from "@/components/organisms/CartDrawer";
 import { getCartItems, updateCartItem, removeFromCart } from "@/services/api/cartService";
-
+import { getCompareItems, addToCompare, removeFromCompare } from "@/services/api/comparisonService";
 const Layout = () => {
   const [cartItems, setCartItems] = useState([]);
+  const [compareItems, setCompareItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   useEffect(() => {
     loadCartItems();
+    loadCompareItems();
   }, []);
 
   const loadCartItems = async () => {
@@ -18,6 +20,15 @@ const Layout = () => {
       setCartItems(items);
     } catch (error) {
       console.error("Failed to load cart items:", error);
+    }
+  };
+
+  const loadCompareItems = () => {
+    try {
+      const items = getCompareItems();
+      setCompareItems(items);
+    } catch (error) {
+      console.error("Failed to load compare items:", error);
     }
   };
 
@@ -48,7 +59,7 @@ const Layout = () => {
     }
   };
 
-  const handleAddToCart = async (product) => {
+const handleAddToCart = async (product) => {
     try {
       const existingItem = cartItems.find(item => item.Id === product.Id);
       if (existingItem) {
@@ -63,18 +74,38 @@ const Layout = () => {
     }
   };
 
-  const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const handleAddToCompare = (product) => {
+    const result = addToCompare(product);
+    if (result.success) {
+      setCompareItems(result.items);
+    }
+    return result;
+  };
+
+  const handleRemoveFromCompare = (productId) => {
+    const result = removeFromCompare(productId);
+    if (result.success) {
+      setCompareItems(result.items);
+    }
+    return result;
+  };
+
+const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const compareCount = compareItems.length;
 
   return (
     <div className="min-h-screen bg-background">
-      <Header cartItemCount={cartItemCount} />
+      <Header cartItemCount={cartItemCount} compareCount={compareCount} />
       <main>
         <Outlet context={{ 
           cartItems, 
+          compareItems,
           onAddToCart: handleAddToCart,
           onUpdateQuantity: handleUpdateQuantity,
           onRemoveItem: handleRemoveItem,
-          onOpenCart: () => setIsCartOpen(true)
+          onOpenCart: () => setIsCartOpen(true),
+          onAddToCompare: handleAddToCompare,
+          onRemoveFromCompare: handleRemoveFromCompare
         }} />
       </main>
       <CartDrawer

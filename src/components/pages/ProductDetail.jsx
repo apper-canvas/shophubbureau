@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useOutletContext, useNavigate } from "react-router-dom";
 import { getProductById } from "@/services/api/productService";
+import { isInCompare } from "@/services/api/comparisonService";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Button from "@/components/atoms/Button";
@@ -9,17 +10,16 @@ import PriceDisplay from "@/components/molecules/PriceDisplay";
 import Badge from "@/components/atoms/Badge";
 import ApperIcon from "@/components/ApperIcon";
 import { toast } from "react-toastify";
-
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { onAddToCart } = useOutletContext();
+const { onAddToCart, onAddToCompare } = useOutletContext();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
-
+  const [inCompare, setInCompare] = useState(false);
   useEffect(() => {
     loadProduct();
   }, [id]);
@@ -41,7 +41,7 @@ const ProductDetail = () => {
     }
   };
 
-  const handleAddToCart = () => {
+const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {
       onAddToCart(product);
     }
@@ -53,6 +53,15 @@ const ProductDetail = () => {
     navigate("/checkout");
   };
 
+  const handleAddToCompare = () => {
+    const result = onAddToCompare(product);
+    if (result.success) {
+      setInCompare(true);
+      toast.success("Product added to comparison");
+    } else {
+      toast.error(result.message);
+    }
+  };
   if (loading) return <Loading type="product-detail" />;
   if (error) return <Error message={error} onRetry={loadProduct} />;
   if (!product) return <Error message="Product not found" />;
@@ -205,24 +214,36 @@ const ProductDetail = () => {
               </div>
             )}
 
-            <div className="flex space-x-4">
+<div className="space-y-4">
+              <div className="flex space-x-4">
+                <Button
+                  onClick={handleAddToCart}
+                  disabled={isOutOfStock}
+                  variant="secondary"
+                  size="lg"
+                  className="flex-1"
+                >
+                  <ApperIcon name="ShoppingCart" size={20} className="mr-2" />
+                  Add to Cart
+                </Button>
+                <Button
+                  onClick={handleBuyNow}
+                  disabled={isOutOfStock}
+                  size="lg"
+                  className="flex-1"
+                >
+                  Buy Now
+                </Button>
+              </div>
               <Button
-                onClick={handleAddToCart}
-                disabled={isOutOfStock}
+                onClick={handleAddToCompare}
+                disabled={inCompare}
                 variant="secondary"
                 size="lg"
-                className="flex-1"
+                className="w-full"
               >
-                <ApperIcon name="ShoppingCart" size={20} className="mr-2" />
-                Add to Cart
-              </Button>
-              <Button
-                onClick={handleBuyNow}
-                disabled={isOutOfStock}
-                size="lg"
-                className="flex-1"
-              >
-                Buy Now
+                <ApperIcon name="Scale" size={20} className="mr-2" />
+                {inCompare ? "Added to Compare" : "Add to Compare"}
               </Button>
             </div>
 

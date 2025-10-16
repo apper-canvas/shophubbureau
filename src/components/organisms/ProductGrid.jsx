@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import BrandFilter from "@/components/molecules/BrandFilter";
-import RatingFilter from "@/components/molecules/RatingFilter";
-import AvailabilityFilter from "@/components/molecules/AvailabilityFilter";
 import { getBrands, getCategories, getProducts } from "@/services/api/productService";
 import ApperIcon from "@/components/ApperIcon";
 import Loading from "@/components/ui/Loading";
 import Empty from "@/components/ui/Empty";
 import Error from "@/components/ui/Error";
+import RatingFilter from "@/components/molecules/RatingFilter";
 import PriceFilter from "@/components/molecules/PriceFilter";
+import AvailabilityFilter from "@/components/molecules/AvailabilityFilter";
+import BrandFilter from "@/components/molecules/BrandFilter";
 import CategoryFilter from "@/components/molecules/CategoryFilter";
 import ProductCard from "@/components/organisms/ProductCard";
 
@@ -181,7 +181,7 @@ const hasActiveFilters = selectedCategories.length > 0 || searchQuery || priceRa
               onAction={hasActiveFilters ? handleClearFilters : undefined}
               icon="Package"
             />
-          ) : (
+) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredProducts.map((product) => (
                 <ProductCard
